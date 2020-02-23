@@ -5,9 +5,12 @@ const getAllProjects = (req, res, next) => {
     Authorization: "Basic " + process.env.GITHUB_AUTH_STRING
   };
 
-  fetch(process.env.GITHUB_API_ENDPOINT + "/users/itsSayantan/repos", {
-    headers
-  })
+  fetch(
+    process.env.GITHUB_API_ENDPOINT + "/users/itsSayantan/repos?sort=updated",
+    {
+      headers
+    }
+  )
     .then(response => {
       if (response.status === 403) {
         return {
