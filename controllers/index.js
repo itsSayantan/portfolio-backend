@@ -76,7 +76,40 @@ const getTimeLineItems = (req, res, next) => {
     });
 }
 
+const getGithubApiRateLimit = (req, res, next) => {
+  fetch(
+    process.env.GITHUB_API_ENDPOINT + "/rate_limit",
+    {
+      headers
+    }
+  )
+    .then(response => {
+      if (response.status === 403) {
+        return {
+          status: 403,
+          responseBody: {
+            status: false,
+            message:
+              "You are forbidden to perform this action. This might be due to the rate limiting in Github APIs. Please try again after some time."
+          }
+        };
+      }
+      return response.json();
+    })
+    .then(jsonData => {
+      if (jsonData.status) {
+        res.status(jsonData.status).send(jsonData.responseBody);
+      } else {
+        res.status(200).send(jsonData);
+      }
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
+
 module.exports = {
   getAllProjects,
-  getTimeLineItems
+  getTimeLineItems,
+  getGithubApiRateLimit
 };
