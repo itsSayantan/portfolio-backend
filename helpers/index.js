@@ -4,10 +4,10 @@ const headers = {
     Authorization: "Basic " + process.env.GITHUB_AUTH_STRING
 };
 
-const getPostData = (githubEndpoint) => {
+const getPostData = (mapping) => {
     return new Promise(resolve => {
         fetch(
-            githubEndpoint,
+            mapping.endpoint,
             {
                 headers
             }
@@ -30,7 +30,7 @@ const getPostData = (githubEndpoint) => {
                     const base64Content = jsonData.content
                     const stringContent = (Buffer.from(base64Content, 'base64')).toString('utf-8')
 
-                    resolve({ code: 200, send: { status: true, message: "Post data was fetched successfully", data: stringContent } })
+                    resolve({ code: 200, send: { status: true, message: "Post data was fetched successfully", data: { header: mapping.header, date: mapping.date, content: stringContent } } })
                 } else {
                     resolve({ code: 500, send: { status: false, message: 'Invalid response from the Github API.' } })
                 }

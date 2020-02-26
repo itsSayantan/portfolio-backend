@@ -146,7 +146,7 @@ const getPostByID = (req, res, next) => {
           if (githubMappingForID) {
             // fetch the content of the post
 
-            const postData = await getPostData(githubMappingForID.endpoint)
+            const postData = await getPostData(githubMappingForID)
 
             res.status(postData.code).send(postData.send)
           } else {
