@@ -11,6 +11,7 @@ const services = require("./controllers");
 app.get("/api/projects/getAll", services.getAllProjects);
 app.get("/api/getTimeLineItems", services.getTimeLineItems);
 app.get("/api/getGithubApiRateLimit", services.getGithubApiRateLimit);
+app.get("/api/posts/get/:id", services.getPostByID)
 
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
