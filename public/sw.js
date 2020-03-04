@@ -1,23 +1,17 @@
-const cacheName = 'site-static';
+const staticCacheName = 'site-static-v1';
+const dynamicCacheName = 'site-dynamic-v1';
 
 const assets = [
     '/',
     '/index.html',
-    '/About.js',
     '/bundle.js',
     '/common.js',
     '/Home.js',
     '/PageNotFound.js',
-    '/Projects.js',
-    '/Post.js',
     '/vendor.js',
     '/sw.js',
     '/manifest.json',
-    '/images/back-button.svg',
-    '/images/big-image.jpeg',
     '/images/close-button.svg',
-    '/images/github.svg',
-    '/images/linkedin.svg',
     '/images/small-image.jpeg',
     '/images/icons/72x72.png',
     '/images/icons/96x96.png',
@@ -34,25 +28,50 @@ const assets = [
 ];
 
 self.addEventListener('install', e => {
-    // pre-cache assets
     e.waitUntil(
-        caches.open(cacheName).then(cache => {
-            return cache.addAll(assets);
-        })
+        Promise.all([
+            // precahce assets
+            caches.open(staticCacheName).then(cache => {
+                return cache.addAll(assets);
+            })
+        ])
     );
 });
 
 self.addEventListener('activate', e => {
     console.log('service worker has been activated');
+
+    e.waitUntil(
+        caches.keys().then(keys => {
+            return Promise.all(
+                keys
+                    .filter(
+                        key =>
+                            key !== staticCacheName && key !== dynamicCacheName
+                    )
+                    .map(key => caches.delete(key))
+            );
+        })
+    );
 });
 
 self.addEventListener('fetch', e => {
     // responsd with something from the cache, if present,
     // else make the fetch call
+    if (e.request.url.match(/^http/)) {
+        e.respondWith(
+            caches.match(e.request).then(cacheRes => {
+                return (
+                    cacheRes ||
+                    fetch(e.request).then(fetchResponse => {
+                        return caches.open(dynamicCacheName).then(cache => {
+                            cache.put(e.request, fetchResponse.clone());
 
-    e.respondWith(
-        caches.match(e.request).then(cacheRes => {
-            return cacheRes || fetch(e.request);
-        })
-    );
+                            return fetchResponse;
+                        });
+                    })
+                );
+            })
+        );
+    }
 });
