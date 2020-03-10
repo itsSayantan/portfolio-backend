@@ -1,5 +1,5 @@
-const staticCacheName = 'site-static-v1';
-const dynamicCacheName = 'site-dynamic-v1';
+const staticCacheName = 'site-static-v1.1.1';
+const dynamicCacheName = 'site-dynamic-v1.1.1';
 
 const assets = [
     '/',
@@ -9,7 +9,6 @@ const assets = [
     '/Home.js',
     '/PageNotFound.js',
     '/vendor.js',
-    '/sw.js',
     '/manifest.json',
     '/images/close-button.svg',
     '/images/small-image.jpeg',
